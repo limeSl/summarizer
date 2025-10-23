@@ -246,16 +246,23 @@ if gen_q_summary:
 # ---------------------------
 # 평가 기능
 # ---------------------------
+# ---------------------------
+# 평가 기능 (수평 배치 버전)
+# ---------------------------
 st.subheader("4) 🧩 AI 평가 기능")
 
-col_eval = st.columns([1, 2])
-with col_eval[0]:
-    st.markdown("**평가 항목 선택**")
+st.markdown("**평가 항목 선택**")
+col1, col2, col3 = st.columns(3)
+with col1:
     creativity = st.checkbox("창의성", value=True)
+with col2:
     logic = st.checkbox("논리성", value=True)
+with col3:
     completeness = st.checkbox("완성도", value=True)
 
-with col_eval[1]:
+# 평가 버튼 (체크박스 아래 중앙 정렬 느낌)
+col_btn = st.columns([1, 1, 1])
+with col_btn[1]:
     evaluate_btn = st.button("✨ 평가하기", use_container_width=True, type="primary")
 
 if evaluate_btn:
@@ -288,11 +295,12 @@ if evaluate_btn:
                         temperature=float(temperature),
                     )
                     st.success("평가가 완료되었습니다! 🎉")
-                    st.balloons()  # 재미있는 효과 (또는 st.snow())
+                    st.balloons()  # 특수효과 (원하시면 st.snow()로 변경 가능)
                     st.write("**📊 평가 결과**")
                     st.markdown(resp.output_text)
                 except Exception as e:
                     st.error(f"평가 중 오류가 발생했습니다: {e}")
+
 
 
 # ---------------------------
