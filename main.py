@@ -244,6 +244,58 @@ if gen_q_summary:
                 st.error(f"관점 요약 생성 중 오류가 발생했습니다: {e}")
 
 # ---------------------------
+# 평가 기능
+# ---------------------------
+st.subheader("4) 🧩 AI 평가 기능")
+
+col_eval = st.columns([1, 2])
+with col_eval[0]:
+    st.markdown("**평가 항목 선택**")
+    creativity = st.checkbox("창의성", value=True)
+    logic = st.checkbox("논리성", value=True)
+    completeness = st.checkbox("완성도", value=True)
+
+with col_eval[1]:
+    evaluate_btn = st.button("✨ 평가하기", use_container_width=True, type="primary")
+
+if evaluate_btn:
+    if not report.strip():
+        st.warning("보고서를 먼저 입력해 주세요.")
+    else:
+        selected_aspects = []
+        if creativity:
+            selected_aspects.append("창의성")
+        if logic:
+            selected_aspects.append("논리성")
+        if completeness:
+            selected_aspects.append("완성도")
+
+        if not selected_aspects:
+            st.info("평가할 항목을 선택해 주세요.")
+        else:
+            with st.spinner("AI가 평가 중입니다... 🎯"):
+                try:
+                    aspect_text = ", ".join(selected_aspects)
+                    prompt = (
+                        f"다음은 학생의 프로젝트 보고서입니다. "
+                        f"'{aspect_text}' 항목에 대해 10점 만점으로 점수를 평가하고, 각 항목별로 간단한 이유를 제시하세요.\n"
+                        f"- 출력 형식: 항목 | 점수(소수점 둘째 자리) | 한 줄 평가 이유\n\n"
+                        f"[보고서]\n{report}"
+                    )
+                    resp = client.responses.create(
+                        model=model,
+                        input=prompt,
+                        temperature=float(temperature),
+                    )
+                    st.success("평가가 완료되었습니다! 🎉")
+                    st.balloons()  # 재미있는 효과 (또는 st.snow())
+                    st.write("**📊 평가 결과**")
+                    st.markdown(resp.output_text)
+                except Exception as e:
+                    st.error(f"평가 중 오류가 발생했습니다: {e}")
+
+
+# ---------------------------
 # 푸터
 # ---------------------------
 st.divider()
